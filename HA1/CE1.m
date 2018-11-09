@@ -10,11 +10,13 @@ plot(x2D_flat(1,:), x2D_flat(2,:), '.');
 axis equal
 xlabel('$x_1$', 'Interpreter','latex')
 ylabel('$x_2$','Interpreter','latex')
+axis equal
 export_fig('Results/CE_1_x2D_figure.pdf', '-pdf','-transparent');
 f = figure();
 plot3(x3D_flat(1,:), x3D_flat(2,:),x3D_flat(3,:), '.');
-axis equal
+
 xlabel('$x_1$', 'Interpreter','latex')
 ylabel('$x_2$','Interpreter','latex')
 zlabel('$x_3$', 'Interpreter','latex')
+axis equal
 export_fig('Results/CE_1_x3D_figure.pdf', '-pdf','-transparent');
