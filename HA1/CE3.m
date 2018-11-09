@@ -22,18 +22,27 @@ figure()
 plotLines(start_H1, end_H1)
 title('Lines after projection with H$_1$', 'interpreter', 'latex')
 axis equal
+export_fig('Results/CE_3_H1_figure.pdf', '-pdf','-transparent');
+
 figure()
 plotLines(start_H2, end_H2)
 title('Lines after projection with H$_2$', 'interpreter', 'latex')
 axis equal
+export_fig('Results/CE_3_H2_figure.pdf', '-pdf','-transparent');
+
 figure()
 plotLines(start_H3, end_H3)
 title('Lines after projection with H$_3$', 'interpreter', 'latex')
 axis equal
+export_fig('Results/CE_3_H3_figure.pdf', '-pdf','-transparent');
+
+
 figure()
 plotLines(start_H4, end_H4)
 title('Lines after projection with H$_4$', 'interpreter', 'latex')
 axis equal
+export_fig('Results/CE_3_H4_figure.pdf', '-pdf','-transparent');
+
 
 %% Line length
 figure()
