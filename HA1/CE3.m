@@ -17,12 +17,30 @@ endpoints_h = cartesian2Homogeneous(endpoints);
 [start_H2, end_H2] = calculateProjection(startpoints_h, endpoints_h, H2);
 [start_H3, end_H3] = calculateProjection(startpoints_h, endpoints_h, H3);
 [start_H4, end_H4] = calculateProjection(startpoints_h, endpoints_h, H4);
+%% Plot projection
+figure()
+plotLines(start_H1, end_H1)
+title('Lines after projection with H$_1$', 'interpreter', 'latex')
+axis equal
+figure()
+plotLines(start_H2, end_H2)
+title('Lines after projection with H$_2$', 'interpreter', 'latex')
+axis equal
+figure()
+plotLines(start_H3, end_H3)
+title('Lines after projection with H$_3$', 'interpreter', 'latex')
+axis equal
+figure()
+plotLines(start_H4, end_H4)
+title('Lines after projection with H$_4$', 'interpreter', 'latex')
+axis equal
 
 
 function [start_projection, end_projection] = calculateProjection(start_points, end_points, H)
 start_projection = H*start_points;
 end_projection = H*end_points;
-
+start_projection = pflat(start_projection);
+end_projection = pflat(end_projection);
 end
 
 function homogeneous = cartesian2Homogeneous(cart)
