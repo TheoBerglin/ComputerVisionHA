@@ -12,8 +12,18 @@ H4 = [sqrt(3) -1 1; 1 sqrt(3) 1; 1/4 1/2 2];
 %% Get homogeneous coordinates
 startpoints_h = cartesian2Homogeneous(startpoints);
 endpoints_h = cartesian2Homogeneous(endpoints);
+%% Point projection
+[start_H1, end_H1] = calculateProjection(startpoints_h, endpoints_h, H1);
+[start_H2, end_H2] = calculateProjection(startpoints_h, endpoints_h, H2);
+[start_H3, end_H3] = calculateProjection(startpoints_h, endpoints_h, H3);
+[start_H4, end_H4] = calculateProjection(startpoints_h, endpoints_h, H4);
 
 
+function [start_projection, end_projection] = calculateProjection(start_points, end_points, H)
+start_projection = H*start_points;
+end_projection = H*end_points;
+
+end
 
 function homogeneous = cartesian2Homogeneous(cart)
 [~, m] = size(cart);
