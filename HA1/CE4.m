@@ -3,36 +3,52 @@ load('compEx4.mat')
 %% Images loaded
 im1 = imread('compEx4im1.jpg');
 im2 = imread('compEx4im2.jpg');
-%% Plot images
-figure()
-imagesc(im1)
-colormap gray
 
-figure()
-imagesc(im2)
-colormap gray
-%% Compute camera center and principle axes
+%% Compute camera data
 % Extract inner parameters, rotation and calibration matrix
 cameraData1 = extractInnerParameters(P1);
 cameraData2 = extractInnerParameters(P2);
-% Principle axes: Viewing direction
-% Note: Implement
+% Camera 1
+% Center: 0 0 0
+% Principle axes: 0.3129    0.9461    0.0837
+% Camera 2
+% Center:   6.6352 14.8460 -15.0691
+% Principle axes: 0.0319    0.3402    0.9398
 
 %% Plot 
 U_flat = pflat(U); % Cartesian
 figure()
-plot3(U_flat(1,:), U_flat(2,:), U_flat(3,:), '.', 'color', 'b')
+plot3(U_flat(1,:), U_flat(2,:), U_flat(3,:), '.', 'color', 'b', 'MarkerSize', 2)
 hold on
 plotCameraCenter(cameraData1)
 plotCameraCenter(cameraData2)
+xlabel('x')
+ylabel('y')
+zlabel('z')
+legend('Point model', 'Camera 1', 'Camera 2', 'Location', 'best')
+%% Project the points
+cameraData1.projectedPoints = pflat(P1*U);
+cameraData2.projectedPoints = pflat(P2*U);
+%% Plot images
+figure()
+imagesc(im1)
+colormap gray
+hold on
+plot(cameraData1.projectedPoints(1,:), cameraData1.projectedPoints(2,:), '.', 'MarkerSize', 2)
+
+figure()
+imagesc(im2)
+colormap gray
+hold on
+plot(cameraData2.projectedPoints(1,:), cameraData2.projectedPoints(2,:), '.', 'MarkerSize', 2)
+
 
 function plotCameraCenter(cameraData)
 quiver3(cameraData.Center(1), cameraData.Center(2), cameraData.Center(3),...
-    cameraData.PrincipleA(1), cameraData.PrincipleA(2),cameraData.PrincipleA(3),2)
-
+    cameraData.PrincipleA(1), cameraData.PrincipleA(2),cameraData.PrincipleA(3),5 )
 end
 function cameraData = extractInnerParameters(P)
-% A = K*R;
+% A = K*R; K = [a b c; 0 d e; 0 0 f]; R=[R1;R2;R3], R1 size 1x3
 tP = P(:,4);
 A = P(:,1:3);
 % Extract rows
@@ -43,7 +59,7 @@ A3 = A(3,:);
 % Length of all rotation rows should be 1
 f = norm(A3);
 R3 = A3./f;
-
+% Notes
 e = A2*R3';
 
 R2 = A2-e*R3;
