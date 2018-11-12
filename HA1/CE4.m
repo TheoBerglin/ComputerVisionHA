@@ -15,12 +15,14 @@ colormap gray
 % Extract inner parameters, rotation and calibration matrix
 [R1, K1] = extractInnerParameters(P1);
 [R2, K2] = extractInnerParameters(P2);
-% Extract camera center
-cameraCenter1 = K1(:,3)';
-cameraCenter2 = K2(:,3)';
-% Principle axes?
+% Principle point ? 
+principlePoint1 = K1(:,3)';
+principlePoint2 = K2(:,3)';
+% Principle axes: X3 ?
+principleAxes1 = principlePoint1(3);
+principleAxes2 = principlePoint2(3);
 
-
+%% Plot 
 
 function [R, K] = extractInnerParameters(P)
 % A = K*R;
