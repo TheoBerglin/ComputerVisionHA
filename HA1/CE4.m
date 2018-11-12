@@ -13,20 +13,25 @@ imagesc(im2)
 colormap gray
 %% Compute camera center and principle axes
 % Extract inner parameters, rotation and calibration matrix
-[R1, K1, t1, C1] = extractInnerParameters(P1);
-[R2, K2, t2, C2] = extractInnerParameters(P2);
-% Principle point ? 
-principlePoint1 = K1(:,1:2)';
-principlePoint2 = K2(:,1:2)';
+cameraData1 = extractInnerParameters(P1);
+cameraData2 = extractInnerParameters(P2);
 % Principle axes: Viewing direction
-% Camera center is C'=(0,0,0) in it's own system. Which point translates to
-% that in the other coordinate system? C' = RC + t -> C = -R^{T}t
-% Added to function
-
+% Note: Implement
 
 %% Plot 
+U_flat = pflat(U); % Cartesian
+figure()
+plot3(U_flat(1,:), U_flat(2,:), U_flat(3,:), '.', 'color', 'b')
+hold on
+plotCameraCenter(cameraData1)
+plotCameraCenter(cameraData2)
 
-function [R, K, t, C] = extractInnerParameters(P)
+function plotCameraCenter(cameraData)
+quiver3(cameraData.Center(1), cameraData.Center(2), cameraData.Center(3),...
+    cameraData.PrincipleA(1), cameraData.PrincipleA(2),cameraData.PrincipleA(3),2)
+
+end
+function cameraData = extractInnerParameters(P)
 % A = K*R;
 tP = P(:,4);
 A = P(:,1:3);
@@ -62,5 +67,14 @@ K = K./K(3,3);
 % that in the other coordinate system? C' = RC + t -> C = -R^{T}t
 t = K\tP;
 C = -R'*t;
+
+% Principle point
+PrP = K(1:2,3);
+% Principle axis: What's location of the point C'=(0,0,1) in C?
+% The difference is the vector pointing along the principle axis
+PrA = R'*([0 0 1]'-t)-C;
+
+cameraData = struct('K', K, 'R', R, 't', t,'Center', C, ...
+                    'PrincipleA', PrA, 'PrinciplePoint', PrP);
 
 end
