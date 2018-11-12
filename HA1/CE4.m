@@ -13,19 +13,22 @@ imagesc(im2)
 colormap gray
 %% Compute camera center and principle axes
 % Extract inner parameters, rotation and calibration matrix
-[R1, K1] = extractInnerParameters(P1);
-[R2, K2] = extractInnerParameters(P2);
+[R1, K1, t1, C1] = extractInnerParameters(P1);
+[R2, K2, t2, C2] = extractInnerParameters(P2);
 % Principle point ? 
-principlePoint1 = K1(:,3)';
-principlePoint2 = K2(:,3)';
-% Principle axes: X3 ?
-principleAxes1 = principlePoint1(3);
-principleAxes2 = principlePoint2(3);
+principlePoint1 = K1(:,1:2)';
+principlePoint2 = K2(:,1:2)';
+% Principle axes: Viewing direction
+% Camera center is C'=(0,0,0) in it's own system. Which point translates to
+% that in the other coordinate system? C' = RC + t -> C = -R^{T}t
+% Added to function
+
 
 %% Plot 
 
-function [R, K] = extractInnerParameters(P)
+function [R, K, t, C] = extractInnerParameters(P)
 % A = K*R;
+tP = P(:,4);
 A = P(:,1:3);
 % Extract rows
 A1 = A(1,:);
@@ -54,5 +57,10 @@ R = [R1;R2;R3];
 K = [a b c; 0 d e; 0 0 f];
 % Should normalize so the value in row 3, column 3 is equal to one
 K = K./K(3,3);
+
+% Camera center is C'=(0,0,0) in it's own system. Which point translates to
+% that in the other coordinate system? C' = RC + t -> C = -R^{T}t
+t = K\tP;
+C = -R'*t;
 
 end
