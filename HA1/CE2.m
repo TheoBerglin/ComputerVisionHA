@@ -38,7 +38,6 @@ pointPlot(I_cart')
 % Calculate distance between line 1 and intersection point l2 and l3
 distance = calculateDistanceLinePoint(l1, I_cart);
 fprintf('The distance between line 1 and intersection point l2-l3 is: %.2f\n', distance);
-export_fig('Results/CE_2.pdf', '-pdf','-transparent');
 
 function distance = calculateDistanceLinePoint(line, point)
 num = line'*[point; 1];

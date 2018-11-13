@@ -20,13 +20,13 @@ endpoints_h = cartesian2Homogeneous(endpoints);
 %% Plot projection
 figure()
 plotLines(start_H1, end_H1)
-title('Lines after projection with H$_1$', 'interpreter', 'latex')
+title('Lines after projection with H$_1$', 'interpreter', 'latex','FontSize', 24)
 axis equal
 export_fig('Results/CE_3_H1_figure.pdf', '-pdf','-transparent');
 
 figure()
 plotLines(start_H2, end_H2)
-title('Lines after projection with H$_2$', 'interpreter', 'latex')
+title('Lines after projection with H$_2$', 'interpreter', 'latex','FontSize', 24)
 axis equal
 export_fig('Results/CE_3_H2_figure.pdf', '-pdf','-transparent');
 
