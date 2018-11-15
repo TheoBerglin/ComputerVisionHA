@@ -7,61 +7,79 @@ figure(1)
 imagesc(im)
 colormap gray
 hold on
-plot(corners (1 ,[1: end 1]) , corners (2 ,[1: end 1]) , '*-');
+plotCorners(corners)
 axis equal
 %% Have we calibrated the cameras?
-corners2 = K\corners;
+calibrated_corners = K\corners;
 figure(2)
-plot( corners2(1 ,[1: end 1]) , corners2(2 ,[1: end 1]) , '*-');
+plotCorners(calibrated_corners)
 axis ij
 axis equal
 
 %% compute the 3D points in the plane v that project onto the corner points
-P = [eye(3) [0 0 0 ]'];
 z = zeros(1,4);
+% z = -(v1*x+v2*y+v4)/v3
 for c=1:4
-  z(c)= -(v(4)+v(2)*corners2(2,c)+v(1)*corners2(1,c))/v(3);
+  z(c)= -(v(4)+v(2)*calibrated_corners(2,c)+v(1)*calibrated_corners(1,c))/v(3);
 end
-corners_v = [corners2(1:2,:); z];
+% Points in the plane v projecting onto the corner points
+corners_v = [calibrated_corners(1:2,:); z]; 
 %% Plot corner points
-figure()
-plot3(corners_v(1 ,[1: end 1]), corners_v(2 ,[1: end 1]), corners_v(3 ,[1: end 1]), '*-')
 % Principle axes and camera center
-R_cal = P(:,1:3);
-C_cal = [0 0 0];
+R_cal = eye(3);
+t_cal = [0 0 0]';
+C_cal = -R_cal\t_cal;
 PrA_cal = R_cal(3,:);
+
+figure(3)
+% Plot 3D corner data
+plot3(corners_v(1 ,[1: end 1]), corners_v(2 ,[1: end 1]), corners_v(3 ,[1: end 1]), '*-')
 hold on
+% Plot the principle axes
 quiver3(C_cal(1),C_cal(2),C_cal(3), PrA_cal(1),PrA_cal(2),PrA_cal(3), 2)
+
 axis ij
 ylabel('y')
-%%
+xlabel('x')
+zlabel('z')
+%% 2 meters to the right
 R = [sqrt(3)/2 0 1/2;0 1 0; -1/2 0 sqrt(3)/2];
 pi = v(1:3);
+% 2 meters to the right The image should translate two meters to the left
 t = [-2;0;0];
 P2 = [R,t];
 H = R-pi'*t;
-t_n_corners = H*corners2;
-figure()
-t_n_points_cart = pflat(t_n_corners);
-plot(t_n_corners (1 ,[1: end 1]) , t_n_corners (2 ,[1: end 1]) , '*-');
-
-hold on
+% The transfered and normalized corners
+t_n_corners = H*calibrated_corners;
+% Let's project the 3D corners in plane V using the camera P2
 projected_3D = P2*[corners_v;ones(1,4)];
-axis ij
-plot(projected_3D (1 ,[1: end 1]) , projected_3D (2 ,[1: end 1]) , '*-');
 
+figure(4)
+t_n_points_cart = pflat(t_n_corners); % Cartesian
+plotCorners(t_n_points_cart)
+hold on
+plotCorners(projected_3D)
+axis ij
+legend('Projective transform corners','Camera P2')
 %% Total H
 Htot = K*H/K;
-figure()
-total_corners = Htot*corners2;
-plot(total_corners (1 ,[1: end 1]) , total_corners (2 ,[1: end 1]) , '*-');
-axis ij
-figure()
+figure(5)
+total_corners = Htot*corners;
+total_corners_cart = pflat(total_corners);
+
 tform = maketform ('projective',Htot');
 [new_im ,xdata , ydata ] = imtransform (im ,tform ,'size ',size(im));
-% Creastes a transformed image ( using tform )
+% Creates a transformed image ( using tform )
 %of the same size as the original one.
 imagesc (xdata ,ydata , new_im);
 % plots the new image with xdata and ydata on the axes
+hold on
+plotCorners(total_corners_cart)
 colormap gray
 axis ij
+export_fig('Results/CE_5_final.pdf', '-pdf','-transparent');
+
+
+function plotCorners(corners)
+plot(corners(1 ,[1: end 1]) , corners(2 ,[1: end 1]) , '*-');
+end
