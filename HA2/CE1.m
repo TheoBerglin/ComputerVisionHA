@@ -83,11 +83,11 @@ plot3(points(1,:), points(2,:), points(3,:), '.')
 end
 function PT = projectiveCamera(P, T)
 n_cameras = length(P);
-PT = cell(n_cameras);
+PT = cell(n_cameras, 1);
 for i=1:n_cameras
    PT{i} = P{i}*T; 
 end
 end
 function im = readRotateImage(img)
-im = imrotate(imread(img), -90);
+im = imrotate(imread(img), 0);
 end
