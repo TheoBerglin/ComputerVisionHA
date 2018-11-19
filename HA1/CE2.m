@@ -1,11 +1,11 @@
 clear all, close all, clc
 im = imread('compEx2.jpg');
+load('compEx2.mat');
 
-im_dim = size(im);
+figure()
 imagesc(im)
 colormap gray
 
-load('compEx2.mat');
 hold all
 % Get the points in cartesian 
 p1_cart = pflat(p1);
@@ -40,6 +40,7 @@ distance = calculateDistanceLinePoint(l1, I_cart);
 fprintf('The distance between line 1 and intersection point l2-l3 is: %.2f\n', distance);
 
 function distance = calculateDistanceLinePoint(line, point)
+% Calculates the distance between a point and a line
 num = line'*[point; 1];
 denum = line(1)^2+line(2)^2;
 distance = abs(num)/sqrt(denum);
@@ -51,8 +52,6 @@ p_diff = points_cart(:,2)-points_cart(:,1);
 k = p_diff(2)/p_diff(1);
 m = points_cart(2,2)-k*points_cart(1,2);
 coefficients = [k -1 m]';
-%line_coeff = polyfit([points_cart(1,1), points_cart(1,2)], [points_cart(2,1), points_cart(2,2)], 1);
-%coefficients = [1/line_coeff(2), -line_coeff(1)/line_coeff(2), +1]';
 end
 function pointPlot(points)
 plot(points(:,1), points(:,2),'x','LineWidth',2,'MarkerSize',10, 'color', 'red');

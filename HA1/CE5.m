@@ -16,10 +16,8 @@ figure(2)
 plotCorners(calibrated_corners)
 axis ij
 axis equal
-
 %% compute the 3D points in the plane v that project onto the corner points
 z = zeros(1,4);
-% z = -(v1*x+v2*y+v4)/v3
 for c=1:4
   z(c)= -(v(4)+v(2)*calibrated_corners(2,c)+v(1)*calibrated_corners(1,c))/v(3);
 end
@@ -29,7 +27,7 @@ corners_v = [calibrated_corners(1:2,:); z];
 % Principle axes and camera center
 R_cal = eye(3);
 t_cal = [0 0 0]';
-C_cal = -R_cal\t_cal;
+C_cal = -R_cal\t_cal; % (0,0,0)
 PrA_cal = R_cal(3,:);
 
 figure(3)
@@ -51,6 +49,8 @@ pi = v(1:3);
 t = [-2;0;0];
 P2 = [R,t];
 %% Camera 2 
+% Camera center (2,0,0)
+% Principle axis R(3,:)
 quiver3(2,0,0, R(3,1),R(3,2),R(3,3), 2)
 plot3(2,0,0,'.', 'MarkerSize', 10, 'color', 'r')
 %% TODO: Add camera to the 3D points
@@ -72,7 +72,6 @@ Htot = K*H/K;
 figure(5)
 total_corners = Htot*corners;
 total_corners_cart = pflat(total_corners);
-
 tform = maketform ('projective',Htot');
 [new_im ,xdata , ydata ] = imtransform (im ,tform ,'size ',size(im));
 % Creates a transformed image ( using tform )

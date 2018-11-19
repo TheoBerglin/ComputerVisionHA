@@ -3,7 +3,6 @@ load('compEx4.mat')
 %% Images loaded
 im1 = imread('compEx4im1.jpg');
 im2 = imread('compEx4im2.jpg');
-
 %% Compute camera data
 % Extract inner parameters, rotation and calibration matrix
 cameraData1 = extractInnerParameters(P1);
@@ -22,6 +21,7 @@ plot3(U_flat(1,:), U_flat(2,:), U_flat(3,:), '.', 'color', 'b', 'MarkerSize', 2)
 hold on
 plotCameraCenter(cameraData1)
 plotCameraCenter(cameraData2)
+% Label and title
 xlabel('x')
 ylabel('y')
 zlabel('z')
