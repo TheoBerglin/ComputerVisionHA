@@ -7,7 +7,8 @@ X_cart = pflat(X);
 plot3Dpoints(X_cart)
 hold on
 plotcams(P)
-axis equal
+title('Original point model', 'interpreter', 'latex','FontSize', 16)
+axis ij
 %% Project the 3D points into one of the cameras
 im_id = 4;
 points_for_camera = getVisiblePoints(X_cart, x, im_id);
@@ -22,14 +23,13 @@ imagesc(im)
 colormap gray
 hold on
 plot(projected_points(1,:), projected_points(2,:), '.')
-axis equal
 %% Projections
 T1 = [1 0 0 0; 0 4 0 0; 0 0 1 0; 1/10 1/10 0 1];
 T2 = [1 0 0 0; 0 1 0 0; 0 0 1 0; 1/16 1/16 0 1];
 %% Modify the 3D points 
 % TODO: This isn't how it's done?
-T1_points = pflat(T1\X);
-T2_points = pflat(T2\X);
+T1_points = pflat(T1*X);
+T2_points = pflat(T2*X);
 %% Projective cameras
 PT1 = projectiveCamera(P, T1);
 PT2 = projectiveCamera(P, T2);
@@ -43,10 +43,10 @@ figure(4)
 plot3Dpoints(T2_points)
 hold on
 plotcams(PT2)
-title('Projective transform  T$_1$ of 3D points', 'interpreter', 'latex','FontSize', 24)
+title('Projective transform  T$_2$ of 3D points', 'interpreter', 'latex','FontSize', 24)
 %% Run points through the camera
 T1_visible = getVisiblePoints(T1_points, x, im_id);
-T1_image = PT2{im_id}*T1_visible;
+T1_image = PT1{im_id}*T1_visible;
 T1_image = pflat(T1_image);
 %T2
 T2_visible = getVisiblePoints(T2_points, x, im_id);
@@ -58,8 +58,9 @@ imagesc(readRotateImage(imfiles{im_id}))
 colormap gray 
 hold on
 plot(T1_image(1,:), T1_image(2,:),'.')
-%plot(projected_points(1,:), projected_points(2,:), 'x')
+plot(projected_points(1,:), projected_points(2,:), 'o')
 title('3D projective transform T$_1$ points through camera', 'interpreter', 'latex','FontSize', 16)
+%export_fig('Results/CE1_T2_camera_projected.pdf', '-pdf','-transparent');
 % T2
 figure(6)
 imagesc(readRotateImage(imfiles{im_id}))
@@ -67,7 +68,8 @@ colormap gray
 hold on
 plot(T2_image(1,:), T2_image(2,:),'.')
 title('3D projective transform T$_2$ points through camera', 'interpreter', 'latex','FontSize', 16)
-plot(projected_points(1,:), projected_points(2,:), 'x')
+plot(projected_points(1,:), projected_points(2,:), 'o')
+%export_fig('Results/CE1_T1_camera_projected.pdf', '-pdf','-transparent');
 %%
 
 function visiblePoints = getVisiblePoints(points, x, im_id)
@@ -85,7 +87,7 @@ function PT = projectiveCamera(P, T)
 n_cameras = length(P);
 PT = cell(n_cameras, 1);
 for i=1:n_cameras
-   PT{i} = P{i}*T; 
+   PT{i} = P{i}/T; 
 end
 end
 function im = readRotateImage(img)
