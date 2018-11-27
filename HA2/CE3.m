@@ -13,7 +13,7 @@ settings3 = struct('keep_points', [1 4 13 16 25 28 31],...
                    'normalize', false,...
                    'img_name', 'not_normalized_selective_points');
 save_fig = false;
-settings = settings3;
+settings = settings1;
 %% Plot figures and points
 figure()
 subplot(1,2,1)
