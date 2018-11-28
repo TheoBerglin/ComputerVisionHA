@@ -49,7 +49,7 @@ data = addCameraProjectedPoints(data);
 %% Plot everything
 plotEndResultData(data, x1_cart, x2_cart, save_fig)
 %% Compute inner parameters of camera 1
-[~, R1_UN] = rq(data.P1_UN)
+[~, R1] = rq(data.P1)
 %% RMS error
 erms1 = calculateRMSError(x1_cart, pflat(data.x1_camera));
 erms2 = calculateRMSError(x2_cart, pflat(data.x2_camera));
@@ -90,14 +90,14 @@ function M = setUpM(x, X)
 n_values = size(x,2);
 M = zeros(3*n_values, 12+n_values);
 for i=1:n_values
+    start_row = 3*(i-1)+1;
+    M(start_row,1:4) = X(:,i)';
+    M(start_row+1, 5:8) = X(:,i)';
+    M(start_row+2, 9:12) = X(:,i)';
     
-    M(3*(i-1)+1,1:4) = X(:,i)';
-    M(3*(i-1)+2, 5:8) = X(:,i)';
-    M(3*i, 9:12) = X(:,i)';
-    
-    M(3*(i-1)+1, 12+i) = -x(1,i);
-    M(3*(i-1)+2, 12+i) = -x(2,i);
-    M(3*i, 12+i) = x(3,i);
+    M(start_row, 12+i) = -x(1,i);
+    M(start_row+1, 12+i) = -x(2,i);
+    M(3*i, 12+i) = -1;
 end
 
 end
@@ -162,13 +162,13 @@ data.P1 = createCameraMatrix(data.V1n, data.XmodelH);
 data.P2 = createCameraMatrix(data.V2n, data.XmodelH);
 
 data.P1_UN = data.N1 \ data.P1;
-data.P2_UN = data.N1 \ data.P2;
+data.P2_UN = data.N2 \ data.P2;
 end
 
 function P = createCameraMatrix(Vn, XmodelH)
 P = reshape(Vn(1:12), [4 3])';
 testProj = P*XmodelH;
-if any(testProj(3,:)<0)
+if any(testProj(3,:).*testProj(2,:)<0)
     P = -P;
 end
 
