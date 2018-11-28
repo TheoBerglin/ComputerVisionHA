@@ -1,4 +1,4 @@
-
+%clear all, clc, close all;
 im1 = imread('cube1.jpg');
 im2 = imread('cube2.jpg');
 [f1 d1] = vl_sift ( single ( rgb2gray (im1 )), 'PeakThresh', 1);
@@ -28,3 +28,4 @@ plot([ x1(1, perm (1:10)); x2(1, perm (1:10))+ size(im1 ,2)] , ...
 hold off;
 %% Store needed points
 CE5_essentials = struct('x1', x1, 'x2', x2);
+%clearvars -except CE5_essentials
