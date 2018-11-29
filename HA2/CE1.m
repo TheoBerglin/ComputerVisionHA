@@ -8,7 +8,6 @@ plot3Dpoints(X_cart)
 hold on
 plotcams(P)
 title('Original point model', 'interpreter', 'latex','FontSize', 16)
-axis ij
 %% Project the 3D points into one of the cameras
 im_id = 4;
 points_for_camera = getVisiblePoints(X_cart, x, im_id);

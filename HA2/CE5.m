@@ -6,46 +6,47 @@ clear all, close all, clc;
 load('CE5_essentials.mat');
 load('compEx3data.mat');
 close all, clc 
-%% 
+%% Load data
 x1 = CE5_essentials.x1;
 x2 = CE5_essentials.x2;
 im1 = imread('cube1.jpg');
 im2 = imread('cube2.jpg');
 P1 = data.P1_UN;
 P2 = data.P2_UN;
-%% data_storage
+%% Triangulate the points the the unnormalized cameras
 data1 = triangulatePoints(P1, P2, x1, x2);
 %%
 figure()
 plotCompareCameraPoints(im1, data1.x_camera_1, x1)
-%export_fig('Results/CE5_original_projection_camera_1.pdf','-pdf','-transparent');
+export_fig('Results/CE5_original_projection_camera_1.pdf','-pdf','-transparent');
 figure()
 plotCompareCameraPoints(im2, data1.x_camera_2, x2)
-%export_fig('Results/CE5_original_projection_camera_2.pdf','-pdf','-transparent');
+export_fig('Results/CE5_original_projection_camera_2.pdf','-pdf','-transparent');
 
-%% Normalize cameras
+%% Normalize cameras and the image points
 [P1_N, K1] = normalizeCamera(P1);
 [P2_N, K2] = normalizeCamera(P2);
 x1_N = K1\[x1; ones(1, size(x1,2))];
 x2_N = K2\[x2; ones(1, size(x2,2))];
 %% Triangulate normalized cameras
 data2 = triangulatePoints(P1_N, P2_N, pflat(x1_N), pflat(x2_N));
-%data2 = triangulatePoints(P1_N, P2_N, x1, x2);
+%data2 = triangulatePoints(P1_N, P2_N, x1, x2); %REMOVE_ROW
+% Rescale the camera projections
 data2.x_camera_1_UN = pflat(K1*[data2.x_camera_1; ones(1, size(data2.x_camera_1,2))]);
 data2.x_camera_2_UN = pflat(K2*[data2.x_camera_2; ones(1, size(data2.x_camera_2,2))]);
 %% Plot normalized cameras
 figure()
 plotCompareCameraPoints(im1, data2.x_camera_1_UN, x1)
-%export_fig('Results/CE5_normalized_projection_camera_1.pdf','-pdf','-transparent');
+export_fig('Results/CE5_normalized_projection_camera_1.pdf','-pdf','-transparent');
 figure()
 plotCompareCameraPoints(im2, data2.x_camera_2_UN, x2)
-%export_fig('Results/CE5_normalized_projection_camera_2.pdf','-pdf','-transparent');
-%% Get the good points
+export_fig('Results/CE5_normalized_projection_camera_2.pdf','-pdf','-transparent');
+%% Extract good points
 good_points = getGoodPoints(x1, data1.x_camera_1, x2, data1.x_camera_2);
 good_points_normalized = getGoodPoints(x1, data2.x_camera_1_UN, x2, data2.x_camera_2_UN);
 fprintf('Good points no normalization: %d \nGood points normalization: %d\n',...
     sum(good_points),sum(good_points_normalized));
-%%
+%% Keep only the good points
 X_good = data1.X(:, good_points_normalized);
 x1_good = x1(:, good_points_normalized);
 x2_good = x2(:, good_points_normalized);
@@ -54,10 +55,10 @@ good_proj_2 = data1.x_camera_2(:, good_points_normalized);
 %% Plot only good points
 figure()
 plotCompareCameraPoints(im1, good_proj_1, x1_good)
-%export_fig('Results/CE5_good_projection_projection_camera_1.pdf','-pdf','-transparent');
+export_fig('Results/CE5_good_projection_projection_camera_1.pdf','-pdf','-transparent');
 figure()
 plotCompareCameraPoints(im2, good_proj_2, x2_good)
-%export_fig('Results/CE5_good_projection_projection_camera_2.pdf','-pdf','-transparent');
+export_fig('Results/CE5_good_projection_projection_camera_2.pdf','-pdf','-transparent');
 
 %% Plot 3D points, cube and cameras
 figure()

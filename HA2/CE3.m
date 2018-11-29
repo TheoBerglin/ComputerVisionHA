@@ -13,7 +13,7 @@ settings3 = struct('keep_points', [1 4 13 16 25 28 31],...
                    'normalize', false,...
                    'img_name', 'not_normalized_selective_points');
 save_fig = false;
-settings = settings1;
+settings = settings2;
 %% Plot figures and points
 figure()
 subplot(1,2,1)
@@ -54,11 +54,6 @@ plotEndResultData(data, x1_cart, x2_cart, save_fig)
 erms1 = calculateRMSError(x1_cart, pflat(data.x1_camera));
 erms2 = calculateRMSError(x2_cart, pflat(data.x2_camera));
 fprintf('RMS error 1: %.2f \nRMS error 2: %.2f\n', erms1, erms2);
-% Type Error 1 Error 2
-% Normalized 22.9338 22.9840
-% Not normalized:  51.5999 49.8014
-% Not normalized selective 3.3982    4.2668
-% Not normalized 2.0524    1.8626
 %% Plot model points, camera etc
 if length(data.settings.keep_points) == 37
     figure()
@@ -69,19 +64,20 @@ if length(data.settings.keep_points) == 37
     hold on
     plotcams({data.P1_UN, data.P2_UN})
 end
-
-
+%% Functions
 function data = createDataStructure(x, Xmodel, settings)
 data = struct('x1', x{1}(:,settings.keep_points),...
               'x2', x{2}(:,settings.keep_points),...
               'Xmodel', Xmodel(:,settings.keep_points),...
               'settings', settings);
 end
+
 function erms = calculateRMSError(xmeas, xproj)
 diff = xmeas-xproj;
 n = size(xmeas,2);
 erms = sqrt(sum(vecnorm(diff,2,1))/n);
 end
+
 function analyzeResults(S, M, V)
 fprintf('The smallest eigenvalue is: %f\n', min(diag(S)))
 fprintf('The value of ||Mv|| is: %f\n', norm(M*V))
@@ -112,11 +108,12 @@ end
 function [x_norm, N] = normalizePoints(x, Norm)
 x = x./x(3,:); % Set third coordinate to 1
 
-mu = mean(x, 2);
-sigma = std(x,[], 2);
+
 
 N = eye(3);
 if Norm
+    mu = mean(x, 2);
+    sigma = std(x,[], 2);
     N(1,1) = 1/sigma(1);
     N(2,2) = 1/sigma(2);
     N(1,3) = -mu(1)/sigma(1);
@@ -125,6 +122,7 @@ end
 x_norm = N*x;
 
 if Norm
+   % Plot points for evaluating that the normalization worked
    plotNormalizedPoints(x_norm);
 end
 
@@ -153,14 +151,14 @@ end
 
 function Vn = solveAndAnalyzeSVD(M)
 [~, S, V] = svd(M);
-Vn = V(:,end);
+Vn = V(:,end); % Corresponds to smallest eigenvalue
 analyzeResults(S, M, Vn)
 end
 
 function data = createCameras(data)
 data.P1 = createCameraMatrix(data.V1n, data.XmodelH);
 data.P2 = createCameraMatrix(data.V2n, data.XmodelH);
-
+% Unnormalized cameras
 data.P1_UN = data.N1 \ data.P1;
 data.P2_UN = data.N2 \ data.P2;
 end
@@ -168,20 +166,22 @@ end
 function P = createCameraMatrix(Vn, XmodelH)
 P = reshape(Vn(1:12), [4 3])';
 testProj = P*XmodelH;
-if any(testProj(3,:).*testProj(2,:)<0)
+if any(testProj(3,:)<0) 
+    % Not the correct solution if the third value is negative
     P = -P;
 end
 
 end
 
 function data = addCameraProjectedPoints(data)
+% Add camera projections
 data.x1_camera = data.P1_UN*data.XmodelH;
 data.x2_camera = data.P2_UN*data.XmodelH;
 end
 
 function plotEndResultData(data, x1_cart, x2_cart, save_fig)
+% Plots the final result
 figure()
-%subplot(1,2,1)
 im1 = imread('cube1.JPG');
 imagesc(im1)
 hold on
