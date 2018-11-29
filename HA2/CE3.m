@@ -13,7 +13,7 @@ settings3 = struct('keep_points', [1 4 13 16 25 28 31],...
                    'normalize', false,...
                    'img_name', 'not_normalized_selective_points');
 save_fig = false;
-settings = settings2;
+settings = settings1;
 %% Plot figures and points
 figure()
 subplot(1,2,1)
@@ -60,8 +60,8 @@ if length(data.settings.keep_points) == 37
     plot3([data.Xmodel(1, startind ); data.Xmodel(1, endind )] ,...
         [data.Xmodel(2, startind ); data.Xmodel(2, endind )] ,...
         [data.Xmodel(3, startind ); data.Xmodel(3, endind )], 'b-');
-    plot3(data.Xmodel(1,:), data.Xmodel(2,:), data.Xmodel(3,:),'.')
     hold on
+    plot3(data.Xmodel(1,:), data.Xmodel(2,:), data.Xmodel(3,:),'.')
     plotcams({data.P1_UN, data.P2_UN})
 end
 %% Functions
