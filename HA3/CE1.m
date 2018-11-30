@@ -2,7 +2,7 @@ clear all, close all, clc
 load('assignment3data\compEx1data.mat')
 %% Settings
 norm = true;
-save_fig = true;
+save_fig = false;
 
 %% Create data structure
 data = createDataStructure(x, norm);
@@ -39,6 +39,9 @@ title(sprintf('Distances ($\\mu_D=$%.5f)', mean(dist)),...
 if save_fig
     saveFigure(sprintf('CE1_histogram_normalization_%s', string(norm)));
 end
+%% Save for CE2
+
+save('CE2_essentials', 'data')
 function saveFigure(name)
 export_fig(sprintf('Results/%s.pdf', name),...
         '-pdf','-transparent');
