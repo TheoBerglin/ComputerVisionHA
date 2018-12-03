@@ -1,7 +1,7 @@
 clear all, close all, clc
 load('assignment3data\compEx1data.mat')
 %% Settings
-norm = false;
+norm = true;
 save_fig = false;
 
 %% Create data structure
@@ -79,6 +79,9 @@ title('Epipolar constraints')
 end
 function data = createNormalizedFundamentalMatrix(data)
 data.Fn = reshape(data.v, [3 3]);
+[U, S, V] = svd(data.Fn);
+S(end, end) = 0;
+data.Fn = U*S*V';
 end
 function data = solveDLT(data)
 %% Solve v via SVD

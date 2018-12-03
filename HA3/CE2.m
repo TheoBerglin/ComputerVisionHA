@@ -12,7 +12,6 @@ e2 = null(F');
 e2x = [0 -e2(3) e2(2); e2(3) 0 -e2(1);-e2(2) e2(1) 0];
 P2 = [e2x*F, e2];
 %% 
-max(max(x{2}'*F*x{1}))
 [x1_N, N1] = normalizePoints(x{1}, true);
 x1_N = pflat(x1_N);
 [x2_N, N2] = normalizePoints(x{2}, true);
@@ -21,14 +20,16 @@ x2_N = pflat(x2_N);
 triang_data = triangulatePoints(P1, P2, x1_N, x2_N);
 %% Plot and compare
 figure()
-plotCompareCameraPoints(im1, triang_data.x_camera_1, x1_N)
+plotCompareCameraPoints(im1, pflat(N1\[triang_data.x_camera_1;ones(1, triang_data.n_points)]), x{1})
 
 figure()
-plotCompareCameraPoints(im2, triang_data.x_camera_2, x2_N)
+%plotCompareCameraPoints([], N2\[triang_data.x_camera_2;ones(1, triang_data.n_points)], x{2})
+plotCompareCameraPoints([], pflat(N2\[triang_data.x_camera_2;ones(1, triang_data.n_points)]), x{2})
 
 figure()
 plot3DModel(triang_data.X)
 %% Functions
+
 function [x_norm, N] = normalizePoints(x, norm)
 x = x./x(3,:); % Set third coordinate to 1
 
