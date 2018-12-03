@@ -2,9 +2,9 @@
 clear all, close all, clc
 load('assignment3data\compEx3data.mat')
 load('assignment3data\compEx1data.mat')
-%load('CE3_essentials.mat');
-P1 = [eye(3) [0;0;0]];
-P2 = [eye(3) [0;0;0]]; % Should come from comp ex 2
+load('CE3_essentials.mat');
+%P1 = [eye(3) [0;0;0]];
+%P2 = [eye(3) [0;0;0]]; % Should come from comp ex 2
 im1 = imread('assignment3data\kronan1.JPG');
 im2 = imread('assignment3data\kronan2.JPG');
 %% Settings
@@ -25,7 +25,7 @@ data_CE3.Eapprox = reshape(data_CE3.v, [3,3]);
 data_CE3 = createValidEssentialMatrix(data_CE3);
 %% Check valid solution ok
 figure()
-hist(diag(data_CE3.x2_N'*E*data_CE3.x1_N))
+hist(diag(data_CE3.x2_N'*data_CE3.E*data_CE3.x1_N))
 %% Compute essential matrix for the un-normalized system
 data_CE3.E_UN = data_CE3.K'\data_CE3.E/data_CE3.K;
 data_CE3 = computeEpipolarLines(data_CE3);
@@ -52,7 +52,7 @@ if save_fig
 end
 
 %% Save
-save('CE4_essentials', data3)
+save('CE4_essentials', 'data_CE3')
 
 %% Functions
 function data = computeEpipolarLines(data)
@@ -114,4 +114,14 @@ for i=1:data.n_points
     xx = data.x2_N(:,i)*data.x1_N(:,i)';
     data.M(i,:) = xx(:)';
 end
+end
+
+function plotMarkerAndEpipole(ep_lines, x)
+im2 = imread('kronan2.jpg');
+imagesc(im2)
+colormap gray
+hold all
+rital(ep_lines)
+plot(x(1,:), x(2,:), 'x', 'MarkerSize', 10,'LineWidth',2)
+
 end

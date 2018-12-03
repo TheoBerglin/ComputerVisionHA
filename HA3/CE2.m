@@ -28,8 +28,9 @@ plotCompareCameraPoints([], pflat(N2\[triang_data.x_camera_2;ones(1, triang_data
 
 figure()
 plot3DModel(triang_data.X)
+%%
+save('CE3_essentials', 'P1', 'P2');
 %% Functions
-
 function [x_norm, N] = normalizePoints(x, norm)
 x = x./x(3,:); % Set third coordinate to 1
 
