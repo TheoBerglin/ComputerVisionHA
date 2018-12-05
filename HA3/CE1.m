@@ -1,11 +1,11 @@
 clear all, close all, clc
 load('assignment3data\compEx1data.mat')
 %% Settings
-norm = true;
-save_fig = false;
+normalize = false;
+save_fig = true;
 
 %% Create data structure
-data = createDataStructure(x, norm);
+data = createDataStructure(x, normalize);
 %% Set up M for the DLT equation
 data = setUpM(data);
 %% Solve DLT
@@ -15,7 +15,9 @@ data = createNormalizedFundamentalMatrix(data);
 %% Analyze fundamental matrix
 analyzeFundamentalMatrix(data.Fn, data.x1_N, data.x2_N);
 %% Compute normalized fundamental matrix
-data = computeNormalizedFundamentalMatrix(data);
+data = computeUnNormalizedFundamentalMatrix(data);
+%% 
+analyzeFundamentalMatrix(data.F, data.x1_N, data.x2_N);
 %% Compute epipolar lines
 data = computeEpipolarLines(data);
 %% 20 random points
@@ -26,22 +28,22 @@ x2_r = data.x2(:,r);
 figure()
 plotMarkerAndEpipole(l_r, x2_r);
 if save_fig
-    saveFigure(sprintf('CE1_line_and_points_normalization_%s', string(norm)));
+    saveFigureOwn(sprintf('CE1_line_and_points_normalization_%s', string(normalize)));
 end
 %% Compute distance
 dist = data.l1.*data.x2;
-dist = sum(dist);
+dist = abs(sum(dist));
 figure()
 histogram(dist, 100,'FaceAlpha', 1);
 title(sprintf('Distances ($\\mu_D=$%.5f)', mean(dist)),...
     'interpreter', 'latex', 'FontSize', 24)
 
 if save_fig
-    saveFigure(sprintf('CE1_histogram_normalization_%s', string(norm)));
+    saveFigureOwn(sprintf('CE1_histogram_normalization_%s', string(normalize)));
 end
 %% Save for CE2
 save('CE2_essentials', 'data')
-function saveFigure(name)
+function saveFigureOwn(name)
 export_fig(sprintf('Results/%s.pdf', name),...
         '-pdf','-transparent');
 end
@@ -64,8 +66,11 @@ function l = computeEpipolarLine(F, x)
 l = F*x;
 l = l./sqrt(repmat(l(1,:).^2+l(2,:).^2+l(3,:).^2, [3,1]));
 end
-function data = computeNormalizedFundamentalMatrix(data)
+function data = computeUnNormalizedFundamentalMatrix(data)
 data.F = data.N2'*data.Fn*data.N1;
+%[U, S, V] = svd(data.F);
+%S(end, end) = 0;
+%data.F = U*S*V';
 end
 function analyzeFundamentalMatrix(F, x1, x2)
 d = det(F);

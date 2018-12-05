@@ -2,45 +2,68 @@
 clear all, close all, clc
 load('assignment3data\compEx3data.mat')
 load('assignment3data\compEx1data.mat')
-%load('CE3_essentials.mat');
-%load('CE4_essentials.mat');
+load('CE4_essentials.mat');
 P1 = [eye(3) [0;0;0]];
-P2 = [eye(3) [0;0;0]]; % Should come from comp ex 2
 im1 = imread('assignment3data\kronan1.JPG');
 im2 = imread('assignment3data\kronan2.JPG');
-
-%% functions
-
-function data = triangulateData(data, solutions, P1)
+%% Triangulate points
+W = [0 -1 0; 1 0 0;0 0 1];
+save_fig = true;
+E = data_CE3.E;
+solutions = extractCamera2Solutions(E, W);
+data_CE4 = createDataStructure(x, K);
+data_CE4.P1_N = K\P1;
+%% Which solution is infront of the cameras
 field_names =fieldnames(solutions);
-n_pos_points = 0;
 for i=1:length(field_names)
-    P2_tmp = solutions(field_names{i});
-    t_data = triangulatePoints(P1, P2_tmp, data.x1_n, data.x2_n);
-    pos_points = numberOfPositivePoints(t_data.X);
-    if pos_points > n_pos_points
-        data.t_data = t_data;
-        n_pos_points = pos_points;
-        data.P2 = P2_tmp;
-    end
+   figure()
+   t_data = triangulatePoints(P1, solutions.(field_names{i}), pflat(data_CE4.x1_N), pflat(data_CE4.x2_N));
+   plot3DModel(pflat(t_data.X));
+   hold on
+   plotcams({K*data_CE4.P1_N K*solutions.(field_names{i})})
 end
+
+%% Extract correct 
+P2_N = solutions.P2_4;
+data_CE4.t_data = triangulatePoints(P1, P2_N, pflat(data_CE4.x1_N), pflat(data_CE4.x2_N));
+%% Unnormalized cameras
+data_CE4.P1_UN = data_CE3.K*P1;
+data_CE4.P2_UN = data_CE3.K*P2_N;
+%% Plots 
+figure()
+plotCompareCameraPoints(im1, pflat(data_CE4.P1_UN*data_CE4.t_data.X./data_CE4.t_data.lambda1), x{1})
+
+if save_fig
+    saveFigureOwn('CE4_projected_points_camera_1');
 end
-function pos_points = numberOfPositivePoints(X)
-pos_points = sum(X(end,:)>0);
+figure()
+plotCompareCameraPoints(im2, pflat(data_CE4.P2_UN*data_CE4.t_data.X./data_CE4.t_data.lambda2), x{2})
+
+if save_fig
+    saveFigureOwn('CE4_projected_points_camera_2');
 end
-function [x_norm, N] = normalizePoints(x, norm)
+figure()
+plot3DModel(pflat(data_CE4.t_data.X))
+hold all
+plotcams({K*data_CE4.P1_N K*P2_N})
+%%
+if save_fig
+    saveFigureOwn('CE4_3D_points');
+end
+%% functions
+function data = createDataStructure(x, K)
+data = struct('x1', x{1}, 'x2', x{2});
+data.x1_N = normalizePoints(data.x1,K);
+data.x2_N = normalizePoints(data.x2,K);
+data.n_points = size(data.x1,2);
+end
+
+
+function [x_norm] = normalizePoints(x, K)
 x = x./x(3,:); % Set third coordinate to 1
 
-N = eye(3);
-if norm
-    mu = mean(x, 2);
-    sigma = std(x,[], 2);
-    N(1,1) = 1/sigma(1);
-    N(2,2) = 1/sigma(2);
-    N(1,3) = -mu(1)/sigma(1);
-    N(2,3) = -mu(2)/sigma(2);
-end
-x_norm = N*x;
+
+x_norm = K\x;
 
 end
 function v = solveDLT(M)
@@ -80,12 +103,32 @@ data.x_camera_2 = pflat(P2*data.X./data.lambda2);
 end
 
 
-function solutions = extractCamera2Solutions(E, u3, W)
+function solutions = extractCamera2Solutions(E, W)
 [U, ~, V] = svd(E);
-
+u3 = U(:,3);
 solutions = struct('P2_1', [U*W*V' u3],...
     'P2_2', [U*W*V' -u3],...
     'P2_3', [U*W'*V' u3],...
     'P2_4', [U*W'*V' -u3]);
+end
 
+
+function plotCompareCameraPoints(im, x_camera, x)
+
+imagesc(im)
+hold on
+plot(x(1,:), x(2,:), '.','DisplayName','Image points')
+plot(x_camera(1,:), x_camera(2,:), 'o', 'DisplayName','Projected')
+legend
+end
+
+
+function plot3DModel(X)
+plot3(X(1,:), X(2,:), X(3,:), '.')
+
+end
+
+function saveFigureOwn(name)
+export_fig(sprintf('Results/%s.pdf', name),...
+        '-pdf','-transparent');
 end

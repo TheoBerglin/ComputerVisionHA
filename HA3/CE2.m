@@ -5,7 +5,9 @@ load('assignment3data\compEx1data.mat')
 im1 = imread('assignment3data\kronan1.JPG');
 im2 = imread('assignment3data\kronan2.JPG');
 F = data.F;
+%F = F./F(3,3)
 %F = [0 1 1;1 0 0;0 1 1];
+save_fig = false;
 %% Create camera matrices
 P1 = [eye(3), [0 0 0]'];
 e2 = null(F');
@@ -16,20 +18,34 @@ P2 = [e2x*F, e2];
 x1_N = pflat(x1_N);
 [x2_N, N2] = normalizePoints(x{2}, true);
 x2_N = pflat(x2_N);
+P1_N = N1*P1;
+P2_N = N2*P2;
 %% Triangulate data
-triang_data = triangulatePoints(P1, P2, x1_N, x2_N);
+triang_data = triangulatePoints(P1_N, P2_N, x1_N, x2_N);
 %% Plot and compare
 figure()
 plotCompareCameraPoints(im1, pflat(N1\[triang_data.x_camera_1;ones(1, triang_data.n_points)]), x{1})
-
+if save_fig
+    saveFigureOwn('CE2_projected_points_camera_1');
+end
 figure()
-%plotCompareCameraPoints([], N2\[triang_data.x_camera_2;ones(1, triang_data.n_points)], x{2})
-plotCompareCameraPoints([], pflat(N2\[triang_data.x_camera_2;ones(1, triang_data.n_points)]), x{2})
-
+plotCompareCameraPoints(im2, pflat(N2\[triang_data.x_camera_2;ones(1, triang_data.n_points)]), x{2})
+%plotCompareCameraPoints([], pflat([triang_data.x_camera_2;ones(1, triang_data.n_points)]), x2_N)
+if save_fig
+    saveFigureOwn('CE2_projected_points_camera_2');
+end
 figure()
-plot3DModel(triang_data.X)
+plot3DModel(pflat(triang_data.X))
 %%
-save('CE3_essentials', 'P1', 'P2');
+if save_fig 
+    saveFigureOwn('CE2_3D_points');
+end
+
+round(N1\P1,1)
+round(N2\P2,1)
+%%
+
+save('CE3_essentials', 'P1', 'P2', 'P1_N', 'P2_N');
 %% Functions
 function [x_norm, N] = normalizePoints(x, norm)
 x = x./x(3,:); % Set third coordinate to 1
@@ -94,4 +110,8 @@ end
 function plot3DModel(X)
 plot3(X(1,:), X(2,:), X(3,:), '.')
 
+end
+function saveFigureOwn(name)
+export_fig(sprintf('Results/%s.pdf', name),...
+        '-pdf','-transparent');
 end
