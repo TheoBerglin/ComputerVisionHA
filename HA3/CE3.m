@@ -3,8 +3,6 @@ clear all, close all, clc
 load('assignment3data\compEx3data.mat')
 load('assignment3data\compEx1data.mat')
 load('CE3_essentials.mat');
-%P1 = [eye(3) [0;0;0]];
-%P2 = [eye(3) [0;0;0]]; % Should come from comp ex 2
 im1 = imread('assignment3data\kronan1.JPG');
 im2 = imread('assignment3data\kronan2.JPG');
 %% Settings
@@ -13,8 +11,6 @@ save_fig = true;
 data_CE3 = createDataStructure(K,x);
 data_CE3.P1 = P1;
 data_CE3.P2 = P2;
-%%
-%data_CE3 = extractInnerParameters(data_CE3);
 %% Set up M for the DLT equation
 data_CE3 = setUpM(data_CE3);
 %% Solve DLT

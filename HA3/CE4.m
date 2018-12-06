@@ -8,7 +8,7 @@ im1 = imread('assignment3data\kronan1.JPG');
 im2 = imread('assignment3data\kronan2.JPG');
 %% Triangulate points
 W = [0 -1 0; 1 0 0;0 0 1];
-save_fig = true;
+save_fig = false;
 E = data_CE3.E;
 solutions = extractCamera2Solutions(E, W);
 data_CE4 = createDataStructure(x, K);

@@ -2,7 +2,7 @@ clear all, close all, clc
 load('assignment3data\compEx1data.mat')
 %% Settings
 normalize = false;
-save_fig = true;
+save_fig = false;
 
 %% Create data structure
 data = createDataStructure(x, normalize);

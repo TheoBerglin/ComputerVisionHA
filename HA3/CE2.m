@@ -5,8 +5,6 @@ load('assignment3data\compEx1data.mat')
 im1 = imread('assignment3data\kronan1.JPG');
 im2 = imread('assignment3data\kronan2.JPG');
 F = data.F;
-%F = F./F(3,3)
-%F = [0 1 1;1 0 0;0 1 1];
 save_fig = false;
 %% Create camera matrices
 P1 = [eye(3), [0 0 0]'];
@@ -30,7 +28,6 @@ if save_fig
 end
 figure()
 plotCompareCameraPoints(im2, pflat(N2\[triang_data.x_camera_2;ones(1, triang_data.n_points)]), x{2})
-%plotCompareCameraPoints([], pflat([triang_data.x_camera_2;ones(1, triang_data.n_points)]), x2_N)
 if save_fig
     saveFigureOwn('CE2_projected_points_camera_2');
 end
