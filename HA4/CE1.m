@@ -10,9 +10,10 @@ printRMSEerror(dRMS)
 %% Ransac
 [planeRansac, inlinersRansac] = calculatePlaneRANSAC(3, 40,0.1,X);
 fprintf('Number of inliners RANSAC: %d\n', length(inlinersRansac))
-dRMSRansac = calculateRMSDistance(planeRansac, X);
+XInliners = X(:,inlinersRansac);
+dRMSRansac = calculateRMSDistance(planeRansac, XInliners);
 printRMSEerror(dRMSRansac);
-planeDistRansac = pointPlaneDistance(planeRansac, X);
+planeDistRansac = pointPlaneDistance(planeRansac, XInliners);
 figure()
 histogram(planeDistRansac, 100,'FaceAlpha', 1)
 if save_fig
@@ -20,10 +21,10 @@ if save_fig
 end
 
 %% Least square only inliers
-XInliners = X(:,inlinersRansac);
 [planeInliners, dRMSInliners] = solveTotalLeastSquare(XInliners);
+
 printRMSEerror(dRMSInliners)
-planeDistInliners = pointPlaneDistance(planeInliners, X);
+planeDistInliners = pointPlaneDistance(planeInliners, XInliners);
 figure()
 histogram(planeDistInliners, 100,'FaceAlpha', 1)
 if save_fig
