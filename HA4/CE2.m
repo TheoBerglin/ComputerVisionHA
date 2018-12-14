@@ -25,7 +25,7 @@ fprintf('The number of matches are: %d\n', size(matches,2))
 
 fprintf('The number of inliners are: %d\n', sum(maxInliners))
 
-%%
+%% Projection
 
 tform = maketform ('projective',bestH');
 % Creates a transfomation that matlab can use for images
@@ -57,13 +57,12 @@ n_points = size(x,2);
 maxInliners = [];
 bestH = 0;
 for i = 1:rRuns
-    randIndices = randperm(n_points, m);
+    randIndices = randperm(n_points, m); % Grab m random points
     xsub = x(:, randIndices);
     ysub = y(:,randIndices);
     M = setUpM(xsub, ysub);
-    %v = solveDLT(M);
-    v = null(M);
-    H = reshape(v(:,end), [3,3])';
+    v = null(M); % Solve directly 
+    H = reshape(v(:,end), [3,3])'; % Reshape solution
     inliners = getInliners(H, threshold, x, y);
     if sum(inliners) > sum(maxInliners)
         maxInliners = inliners;
@@ -81,21 +80,13 @@ dist = sqrt(sum(diff2,1));
 inliners = dist < threshold;
 end
 
-function v = solveDLT(M)
-%% Solve v via SVD
-v = solveAndAnalyzeSVD(M);
-end
 
 function Vn = solveAndAnalyzeSVD(M)
-[~, S, V] = svd(M);
+[~, ~, V] = svd(M);
 Vn = V(:,end); % Corresponds to smallest eigenvalue
-%analyzeResults(S, M, Vn)
+
 end
 
-function analyzeResults(S, M, V)
-fprintf('The smallest eigenvalue is: %f\n', min(diag(S)))
-fprintf('The value of ||Mv|| is: %f\n', norm(M*V))
-end
 function M = setUpM(x, y)
 x = x./x(3,:);
 y = y./y(3,:);

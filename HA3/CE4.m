@@ -51,6 +51,10 @@ if save_fig
     saveFigureOwn('CE4_3D_points');
 end
 %% functions
+P1_UN = data_CE4.P1_UN;
+P2_UN = data_CE4.P1_UN;
+X = data_CE4.t_data.X;
+save('HA5_ess', 'P1_UN', 'P2_UN', 'X')
 function data = createDataStructure(x, K)
 data = struct('x1', x{1}, 'x2', x{2});
 data.x1_N = normalizePoints(data.x1,K);
