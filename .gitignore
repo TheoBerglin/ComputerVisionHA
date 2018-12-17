@@ -7,3 +7,5 @@ altmany-export_fig-5b3965b/*
 Berglin_*
 Theo*
 *.orig
+Project/*
+!Project/*.m
