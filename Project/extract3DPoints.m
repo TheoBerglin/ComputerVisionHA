@@ -6,8 +6,8 @@ for i = 1 : size(matchesFound,2)
     [P_lN, P_rN, xlN, xrN, K_l, K_r] = normalizeCameraAndPoints(P_l, P_r, x_l, x_r);
     %[matchesFound{i}.X, lambdal, lambdaR] = triangulatePoints(P_lN, P_rN,...
     %    xlN, xrN);
-    [matchesFound{i}.X, lambdal, lambdaR] = triangulatePoints(P_l, P_r,...
-        x_l, x_r);
+    [matchesFound{i}.X, lambdal, lambdaR] = triangulatePoints(P_lN, P_rN,...
+        xlN, xrN);
     matchesFound{i}.ProjectedL =  pflat(P_l*matchesFound{i}.X./lambdal);
     matchesFound{i}.ProjectedR =  pflat(P_r*matchesFound{i}.X./lambdaR);
     
