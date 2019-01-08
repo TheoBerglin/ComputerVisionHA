@@ -1,9 +1,10 @@
 function matches = getCellMatches(data_l, data_r, matchFoundL2R, F1, F2)
 
 [confidenceL, confidenceR] = getConfidenceArrays(data_l, data_r);
-s = max(size(data_l,2), size(data_r,2));
+s = max(size(data_l,2), size(data_r,2)); % We should go through all points
 
 matches = cell(1,s);
+% Match points
 for i=1:s
     matchStruct = struct('LeftIndex', nan, 'RightIndex', nan,...
         'LeftProb', nan, 'RightProb', nan, 'MatchFound', false);

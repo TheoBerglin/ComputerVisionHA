@@ -7,13 +7,14 @@ for i=1:size(data1,2)
     keyPoints1 = data1{i}.keypoints;
     l = calculateEpipolarLines(F, keyPoints1);
     minIndice = 0;
-    minDist = 100; %Default value, laaaaaaaaaaarge
+    minDist = 100; %Default value
     for j = 1 : size(data2,2)
         if matchFound(j) == 0
             comparePoints = data2{j}.keypoints;
             % Compute distance to epipolar line
             dist = abs(diag(l'*makeHomogenous(comparePoints)));
             distSum = sum(dist);
+            % Punish distant points
             distSum = distSum+0.1*norm(abs(keyPoints1-comparePoints));
             if distSum < minDist
                 minDist = distSum;

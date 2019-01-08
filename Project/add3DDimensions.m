@@ -1,10 +1,8 @@
 function [matchesFound, Objects] = add3DDimensions(matchesFound, data_l, data_r)
 backIndices = [1 4 5 8];
 frontIndices = [2 3 6 7];
-leftIndices = [1 2 5 6];
-topIndices = [5 6 7 8];
 bottomIndices = [1 2 3 4];
-rightIndices = [3 4 7 8];
+
 maxLength = 7;
 maxWidth = 4;
 maxHeight = 2;
@@ -20,7 +18,9 @@ for i = 1 : size(matchesFound,2)
     backX = X(:, backIndices);
     mBackX = mean(backX, 2);
     
-    
+    % Normalized points when triangulating
+    %A7 = [24.425409 17.161863 16.187050]
+    %B7 = [24.089081 16.775682 15.997622]
     % Not best result but correct angle, take this one
     
     %ry = -pi/2+atan2(dir(1), dir(3));
