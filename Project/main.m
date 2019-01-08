@@ -7,7 +7,7 @@ write_output_to_files = true;
 
 use_images = true;
 plot_outputs = true;
-frames_to_plot = [000322, 000917, 004388];
+frames_to_plot = [000322, 000917, 004388, 4835, 6365, 4465,1512, 6394, 3825];
 
 %% Main (you do not need to change this, see runFrame.m instead) %%
 addpath('data', 'util')
@@ -35,15 +35,21 @@ for frame_id = data_list'
     % Load data
     data_left = getfield(left, strcat('img_', frame_id_str));
     data_right = getfield(right, strcat('img_', frame_id_str));
-
+    
+    if size(data_left,2) ~= size(data_right,2)
+      %  frames_to_plot = [frames_to_plot, frame_id];
+       fprintf('%s, %d, %d\n', frame_id_str, size(data_left,2), size(data_right,2)) 
+    end
+    
     P_left = readCalibration('data/calib', frame_id, 2);
     P_right = readCalibration('data/calib', frame_id, 3);
-  
+    
+    
     % Run algorithm
     if use_images
         img_left = imread(strcat('data/images/left/', frame_id_str, '.png'));
         img_right = imread(strcat('data/images/right/', frame_id_str, '.png'));
-        frame_detections = runFrame(data_left, data_right, P_left, P_right, img_left, img_right);
+        frame_detections = runFrame(data_left, data_right, frame_id, P_left, P_right, img_left, img_right);
     else
         frame_detections = runFrame(data_left, data_right, P_left, P_right);
     end
@@ -51,6 +57,7 @@ for frame_id = data_list'
     if write_output_to_files
         writeLabels(frame_detections, path, frame_id, P_left);
     end
+    
     
     % Plot results
     if use_images && plot_outputs && ismember(frame_id, frames_to_plot)
