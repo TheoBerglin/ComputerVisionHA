@@ -7,7 +7,7 @@ write_output_to_files = true;
 
 use_images = true;
 plot_outputs = true;
-frames_to_plot = [000322, 000917, 004388, 4835, 6365, 4465,1512, 6394, 3825];
+frames_to_plot = [000322, 000917, 004388, 4835, 6365, 4465,1512, 6394, 3825, 542,1143, 1235, 2886,2964, 3205, 3386];
 
 %% Main (you do not need to change this, see runFrame.m instead) %%
 addpath('data', 'util')
