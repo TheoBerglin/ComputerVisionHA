@@ -40,7 +40,7 @@ end
 
 plot_analysis_images = false;
 if plot_analysis_images
-    writeAnalysisImages(frame_id, image_l, image_r, matchesFound, P_l, P_r)
+    writeAnalysisImages(frame_id, image_l, image_r, data_l, data_r, P_l, P_r)
 end
 
 
