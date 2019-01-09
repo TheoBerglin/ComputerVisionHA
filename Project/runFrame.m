@@ -1,4 +1,4 @@
-function [objects] = runFrame(data_l, data_r,frame_id, P_l, P_r, image_l, image_r)
+function [objects] = runFrame(data_l, data_r, P_l, P_r, image_l, image_r)
 
 
 %RUNFRAME takes inputs from a stereo frame and yields 3D boxes
@@ -38,10 +38,6 @@ else
     objects = [];
 end
 
-plot_analysis_images = false;
-if plot_analysis_images
-    writeAnalysisImages(frame_id, image_l, image_r, data_l, data_r, P_l, P_r)
-end
 
 
 

@@ -49,7 +49,7 @@ for frame_id = data_list'
     if use_images
         img_left = imread(strcat('data/images/left/', frame_id_str, '.png'));
         img_right = imread(strcat('data/images/right/', frame_id_str, '.png'));
-        frame_detections = runFrame(data_left, data_right, frame_id, P_left, P_right, img_left, img_right);
+        frame_detections = runFrame(data_left, data_right, P_left, P_right, img_left, img_right);
     else
         frame_detections = runFrame(data_left, data_right, P_left, P_right);
     end
